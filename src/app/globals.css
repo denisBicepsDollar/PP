@@ -1,20 +1,20 @@
-/* Панель мониторинга доступности — тёмная NOC-тема, без градиентов */
+/* Панель мониторинга доступности — светлая тема, без градиентов */
 
 :root {
-  --bg: #0f1419;
-  --panel: #171e26;
-  --panel-2: #1c2530;
-  --border: #26313d;
-  --text: #e6edf3;
-  --muted: #8b98a5;
-  --green: #22c55e;
-  --green-bg: rgba(34, 197, 94, 0.12);
-  --red: #ef4444;
+  --bg: #f5f7fa;
+  --panel: #ffffff;
+  --panel-2: #eef2f6;
+  --border: #d8dee6;
+  --text: #1a2330;
+  --muted: #5c6b7c;
+  --green: #15803d;
+  --green-bg: rgba(34, 197, 94, 0.15);
+  --red: #b91c1c;
   --red-bg: rgba(239, 68, 68, 0.12);
-  --amber: #f59e0b;
-  --amber-bg: rgba(245, 158, 11, 0.12);
-  --gray-bg: rgba(139, 152, 165, 0.14);
-  --accent: #2f81f7;
+  --amber: #b45309;
+  --amber-bg: rgba(245, 158, 11, 0.16);
+  --gray-bg: rgba(92, 107, 124, 0.14);
+  --accent: #1d4ed8;
   --radius: 10px;
 }
 
@@ -66,10 +66,10 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1
   cursor: pointer; background: var(--panel-2); color: var(--text);
   transition: background 0.15s, border-color 0.15s;
 }
-.btn:hover:not(:disabled) { border-color: #3a4756; }
+.btn:hover:not(:disabled) { border-color: #b0bac7; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.btn-primary:hover:not(:disabled) { background: #1f6feb; }
+.btn-primary:hover:not(:disabled) { background: #1e40af; }
 .btn-secondary { background: var(--panel-2); }
 .btn-ghost { background: transparent; }
 .btn-sm { padding: 4px 10px; font-size: 12px; }
@@ -88,7 +88,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1
 /* ---------- Панели и KPI ---------- */
 .panel {
   background: var(--panel); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 14px;
+  border-radius: var(--radius); padding: 14px; box-shadow: 0 1px 2px rgba(20, 30, 45, 0.04);
 }
 .kpi-grid {
   display: grid; grid-template-columns: repeat(5, 1fr);
@@ -96,7 +96,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1
 }
 .kpi {
   background: var(--panel); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 14px;
+  border-radius: var(--radius); padding: 14px; box-shadow: 0 1px 2px rgba(20, 30, 45, 0.04);
   display: flex; flex-direction: column; gap: 2px;
 }
 .kpi-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -135,7 +135,7 @@ input:focus, select:focus { border-color: var(--accent); }
   font-size: 13px; font-weight: 600; cursor: pointer;
 }
 .tab:hover { color: var(--text); }
-.tab-active { background: var(--panel-2); color: var(--text); border-color: #3a4756; }
+.tab-active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .tab-count { opacity: 0.75; font-weight: 400; margin-left: 4px; }
 
 /* ---------- Сетка: таблица + события ---------- */
@@ -150,7 +150,7 @@ input:focus, select:focus { border-color: var(--accent); }
   background: var(--panel-2);
 }
 .devices-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-.devices-table tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+.devices-table tbody tr:hover { background: rgba(29, 78, 216, 0.04); }
 .row-offline { box-shadow: inset 3px 0 0 var(--red); }
 .row-degraded { box-shadow: inset 3px 0 0 var(--amber); }
 .row-online { box-shadow: inset 3px 0 0 var(--green); }
@@ -207,15 +207,15 @@ input:focus, select:focus { border-color: var(--accent); }
 /* ---------- Баннер ошибки ---------- */
 .error-banner {
   display: flex; align-items: center; gap: 10px;
-  background: var(--red-bg); border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #fca5a5; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 14px;
+  background: var(--red-bg); border: 1px solid rgba(185, 28, 28, 0.45);
+  color: var(--red); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 14px;
 }
 .error-banner .btn { margin-left: auto; }
 .form-error { color: var(--red); font-size: 13px; margin: 4px 0 0; }
 
 /* ---------- Модальные окна ---------- */
 .modal-backdrop {
-  position: fixed; inset: 0; background: rgba(4, 8, 12, 0.72);
+  position: fixed; inset: 0; background: rgba(30, 41, 59, 0.45);
   display: flex; align-items: center; justify-content: center;
   padding: 16px; z-index: 50; overflow-y: auto;
 }
