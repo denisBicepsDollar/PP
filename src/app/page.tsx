@@ -1,9 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { AddDeviceInput, DeviceSnapshot, DeviceStatus, StatusResponse } from "@/lib/types";
+import type {
+  AddDeviceInput,
+  DeviceSnapshot,
+  DeviceStatus,
+  StatusResponse,
+} from "@/lib/types";
 import { formatLatency, formatTime, timeAgo } from "@/lib/format";
-import { StatusBadge, ChecksStrip, STATUS_META } from "@/components/StatusBadge";
+import {
+  StatusBadge,
+  ChecksStrip,
+  STATUS_META,
+} from "@/components/StatusBadge";
 import { DeviceDetail } from "@/components/DeviceDetail";
 import { AddDeviceModal } from "@/components/AddDeviceModal";
 import {
@@ -31,9 +40,14 @@ const INTERVALS = [
 ];
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, { ...init, headers: { "Content-Type": "application/json" } });
+  const res = await fetch(path, {
+    ...init,
+    headers: { "Content-Type": "application/json" },
+  });
   if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as { error?: string } | null;
+    const body = (await res.json().catch(() => null)) as {
+      error?: string;
+    } | null;
     throw new Error(body?.error ?? `Ошибка ${res.status}`);
   }
   return res.json() as Promise<T>;
@@ -94,20 +108,23 @@ export default function DashboardPage() {
 
   /* ---------------- действия над устройствами ---------------- */
 
-  const withBusy = useCallback(async (id: string, fn: () => Promise<unknown>) => {
-    setBusyIds((s) => new Set(s).add(id));
-    try {
-      await fn();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Ошибка");
-    } finally {
-      setBusyIds((s) => {
-        const next = new Set(s);
-        next.delete(id);
-        return next;
-      });
-    }
-  }, []);
+  const withBusy = useCallback(
+    async (id: string, fn: () => Promise<unknown>) => {
+      setBusyIds((s) => new Set(s).add(id));
+      try {
+        await fn();
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Ошибка");
+      } finally {
+        setBusyIds((s) => {
+          const next = new Set(s);
+          next.delete(id);
+          return next;
+        });
+      }
+    },
+    [],
+  );
 
   const checkOne = useCallback(
     (id: string) =>
@@ -144,7 +161,10 @@ export default function DashboardPage() {
 
   const addDevice = useCallback(
     async (input: AddDeviceInput) => {
-      await api("/api/devices", { method: "POST", body: JSON.stringify(input) });
+      await api("/api/devices", {
+        method: "POST",
+        body: JSON.stringify(input),
+      });
       await load();
     },
     [load],
@@ -154,7 +174,8 @@ export default function DashboardPage() {
 
   const devices = data?.devices ?? [];
   const summary = useMemo(() => {
-    const by = (s: DeviceStatus) => devices.filter((d) => d.status === s).length;
+    const by = (s: DeviceStatus) =>
+      devices.filter((d) => d.status === s).length;
     const lat = devices
       .filter((d) => d.status === "online" && d.latencyMs !== null)
       .map((d) => d.latencyMs as number);
@@ -164,23 +185,31 @@ export default function DashboardPage() {
       offline: by("offline"),
       degraded: by("degraded"),
       disabled: by("disabled"),
-      avgLatency: lat.length ? Math.round(lat.reduce((a, b) => a + b, 0) / lat.length) : null,
+      avgLatency: lat.length
+        ? Math.round(lat.reduce((a, b) => a + b, 0) / lat.length)
+        : null,
     };
   }, [devices]);
 
-  const groups = useMemo(() => Array.from(new Set(devices.map((d) => d.group))), [devices]);
+  const groups = useMemo(
+    () => Array.from(new Set(devices.map((d) => d.group))),
+    [devices],
+  );
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return devices.filter((d) => {
       if (filter !== "all" && d.status !== filter) return false;
       if (group !== "all" && d.group !== group) return false;
-      if (q && !`${d.name} ${d.host} ${d.type}`.toLowerCase().includes(q)) return false;
+      if (q && !`${d.name} ${d.host} ${d.type}`.toLowerCase().includes(q))
+        return false;
       return true;
     });
   }, [devices, filter, group, search]);
 
-  const selected = selectedId ? devices.find((d) => d.id === selectedId) ?? null : null;
+  const selected = selectedId
+    ? (devices.find((d) => d.id === selectedId) ?? null)
+    : null;
 
   const filterTabs: { id: Filter; label: string; count: number }[] = [
     { id: "all", label: "Все", count: summary.total },
@@ -201,14 +230,17 @@ export default function DashboardPage() {
           </span>
           <div>
             <h1>Панель мониторинга доступности</h1>
-            <p className="muted">D4NMS · опрос сетевых узлов · демо-режим на моках</p>
+            <p className="muted">
+              D4NMS · опрос сетевых узлов · демо-режим на моках
+            </p>
           </div>
         </div>
         <div className="topbar-actions">
-          <span className="mock-chip" title="Данные генерируются мок-движком, реальный пинг не выполняется">
-            МОК · без реального пинга
-          </span>
-          <button className="btn btn-secondary" onClick={() => void poll()} disabled={polling}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => void poll()}
+            disabled={polling}
+          >
             <IconRefresh size={15} className={polling ? "spin" : undefined} />
             {polling ? "Опрашиваем…" : "Проверить все"}
           </button>
@@ -221,7 +253,10 @@ export default function DashboardPage() {
       {error && (
         <div className="error-banner" role="alert">
           <IconAlert size={16} /> {error}
-          <button className="btn btn-secondary btn-sm" onClick={() => void load()}>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={() => void load()}
+          >
             Повторить
           </button>
         </div>
@@ -237,7 +272,12 @@ export default function DashboardPage() {
         <div className="kpi kpi-online">
           <span className="kpi-label">Онлайн</span>
           <span className="kpi-value">{summary.online}</span>
-          <span className="kpi-sub">{summary.total ? Math.round((summary.online / summary.total) * 100) : 0}% от всех</span>
+          <span className="kpi-sub">
+            {summary.total
+              ? Math.round((summary.online / summary.total) * 100)
+              : 0}
+            % от всех
+          </span>
         </div>
         <div className="kpi kpi-offline">
           <span className="kpi-label">Офлайн</span>
@@ -284,7 +324,8 @@ export default function DashboardPage() {
             {paused
               ? "Автоопрос приостановлен"
               : `Автоопрос каждые ${intervalSec} с`}
-            {lastPollAt && ` · последний опрос ${formatTime(lastPollAt.toISOString())}`}
+            {lastPollAt &&
+              ` · последний опрос ${formatTime(lastPollAt.toISOString())}`}
           </span>
         </div>
 
@@ -293,11 +334,16 @@ export default function DashboardPage() {
             <IconSearch size={15} />
             <input
               placeholder="Поиск по имени, IP, типу…"
+              className="input-group"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </label>
-          <select value={group} onChange={(e) => setGroup(e.target.value)} aria-label="Группа">
+          <select
+            value={group}
+            onChange={(e) => setGroup(e.target.value)}
+            aria-label="Группа"
+          >
             <option value="all">Все группы</option>
             {groups.map((g) => (
               <option key={g} value={g}>
@@ -328,7 +374,9 @@ export default function DashboardPage() {
           {!data ? (
             <p className="muted empty">Загрузка данных…</p>
           ) : filtered.length === 0 ? (
-            <p className="muted empty">Устройства не найдены. Измените фильтры или добавьте узел.</p>
+            <p className="muted empty">
+              Устройства не найдены. Измените фильтры или добавьте узел.
+            </p>
           ) : (
             <div className="table-wrap">
               <table className="devices-table">
@@ -347,7 +395,10 @@ export default function DashboardPage() {
                   {filtered.map((d) => (
                     <tr key={d.id} className={`row-${d.status}`}>
                       <td>
-                        <button className="device-name" onClick={() => setSelectedId(d.id)}>
+                        <button
+                          className="device-name"
+                          onClick={() => setSelectedId(d.id)}
+                        >
                           <IconServer size={15} />
                           <span>
                             <strong>{d.name}</strong>
@@ -368,7 +419,9 @@ export default function DashboardPage() {
                       <td>
                         <ChecksStrip checks={d.checks} />
                       </td>
-                      <td className="muted small">{timeAgo(d.lastCheckedAt)}</td>
+                      <td className="muted small">
+                        {timeAgo(d.lastCheckedAt)}
+                      </td>
                       <td>
                         <div className="row-actions">
                           <button
@@ -377,11 +430,18 @@ export default function DashboardPage() {
                             disabled={!d.enabled || busyIds.has(d.id)}
                             onClick={() => void checkOne(d.id)}
                           >
-                            <IconRefresh size={15} className={busyIds.has(d.id) ? "spin" : undefined} />
+                            <IconRefresh
+                              size={15}
+                              className={busyIds.has(d.id) ? "spin" : undefined}
+                            />
                           </button>
                           <button
                             className="icon-btn"
-                            title={d.enabled ? "Отключить мониторинг" : "Включить мониторинг"}
+                            title={
+                              d.enabled
+                                ? "Отключить мониторинг"
+                                : "Включить мониторинг"
+                            }
                             disabled={busyIds.has(d.id)}
                             onClick={() => void toggle(d)}
                           >
@@ -417,7 +477,11 @@ export default function DashboardPage() {
               {data.events.slice(0, 12).map((e) => (
                 <li key={e.id} className={`event event-${e.kind}`}>
                   <span className="event-icon">
-                    {e.kind === "up" ? <IconCheck size={14} /> : <IconAlert size={14} />}
+                    {e.kind === "up" ? (
+                      <IconCheck size={14} />
+                    ) : (
+                      <IconAlert size={14} />
+                    )}
                   </span>
                   <div>
                     <p>{e.message}</p>
@@ -431,11 +495,10 @@ export default function DashboardPage() {
       </div>
 
       <footer className="footer muted">
-        Демо-режим: статусы генерируются мок-движком (<code>src/lib/mock-engine.ts</code>).
-        При переходе на реальный мониторинг этот файл заменяется на TCP/ICMP-чекер и БД —
-        интерфейс и API не изменятся. Серверное время:{" "}
-        {data ? formatTime(data.serverTime) : "—"} · статусы:{" "}
-        {Object.values(STATUS_META).map((m) => m.label).join(" / ")}
+        Серверное время: {data ? formatTime(data.serverTime) : "—"} · статусы:{" "}
+        {Object.values(STATUS_META)
+          .map((m) => m.label)
+          .join(" / ")}
       </footer>
 
       {selected && (
@@ -446,7 +509,9 @@ export default function DashboardPage() {
           checking={busyIds.has(selected.id)}
         />
       )}
-      {showAdd && <AddDeviceModal onClose={() => setShowAdd(false)} onAdd={addDevice} />}
+      {showAdd && (
+        <AddDeviceModal onClose={() => setShowAdd(false)} onAdd={addDevice} />
+      )}
     </div>
   );
 }
