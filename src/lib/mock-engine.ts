@@ -166,8 +166,8 @@ const SEED_DEVICES: SeedDevice[] = [
     profile: { baseLatencyMs: 18, jitterMs: 7, failureRate: 0.01, degradedRate: 0.03 },
   },
   {
-    name: "DNS Cloudflare",
-    host: "1.1.1.1",
+    name: "DNS Яндекс",
+    host: "77.88.8.8",
     port: 53,
     type: "Внешний узел",
     group: "Внешние",
